@@ -1,0 +1,18 @@
+{
+    "name": "Aziende Industriali di Lugano (AIL) SA",
+    "accounts": [
+        "CH0230000004690003873"
+    ],
+    "addresses": [
+        {
+            "address_type": "S",
+            "name": "Aziende Industriali di Lugano (AIL) SA",
+            "address_line_1": "Casella postale",
+            "address_line_2": "",
+            "postal_code": "6901",
+            "city": "Lugano",
+            "country": "CH"
+        }
+    ],
+    "customer_prompt": "Extract invoice header and line items for AIL. Return JSON following the provided schema.\n\n## AIL-Specific Instructions\n\n- The invoices are in Italian\n- Store the Invoice Number WITHOUT dots. GOOD: 10267775 BAD: 10.267.7775"
+}

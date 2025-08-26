@@ -1,0 +1,15 @@
+langchain
+langchain-openai
+black
+docling==2.47.1
+marker-pdf==1.8.5
+python-dotenv==1.1.1
+pyzbar==0.1.9
+Pillow==10.3.0
+scipy>=1.11.2,<1.12
+PyYAML==6.0.1
+pydantic==2.7.4
+pymupdf==1.24.13
+opencv-contrib-python==4.10.0.84
+numpy>=1.21.0
+psycopg[binary]>=3.2

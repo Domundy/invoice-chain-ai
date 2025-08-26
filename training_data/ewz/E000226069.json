@@ -1,0 +1,74 @@
+{
+  "header": {
+    "filename": "E000226069.pdf",
+    "invoice_number": "34400027041",
+    "invoice_date": "12.04.2024",
+    "due_date": "21.05.2024",
+    "customer_number": "",
+    "contract_number": "",
+    "vat_number": "CHE-108.954.978",
+    "billing_period": "01.03.2024-31.03.2024",
+    "total_amount_excl_vat": "4292.41",
+    "total_amount_excl_vat_unit": "CHF",
+    "vat_amount": "347.69",
+    "vat_amount_unit": "CHF",
+    "total_amount_incl_vat": "4640.10",
+    "total_amount_incl_vat_unit": "CHF",
+    "rounding_difference": "0.00",
+    "rounding_difference_unit": "CHF",
+    "payable_amount": "4640.10",
+    "payable_amount_unit": "CHF",
+    "delivery_address": {
+      "description": "",
+      "type_of_delivery_location": "",
+      "id_of_delivery_location": "",
+      "address_line1": "",
+      "city_zip": ""
+    },
+    "address": {
+      "recipient": "",
+      "address_line1": "",
+      "reference": "",
+      "city_zip": ""
+    },
+    "provider": {
+      "name": "ewz - Elektrizitätswerk der Stadt Zürich",
+      "address_line1": "Tramstrasse 35",
+      "city_zip": "8050 Zürich"
+    },
+    "contact": {
+      "email": "",
+      "phone": "",
+      "website": ""
+    }
+  },
+  "line_items": [
+    {
+      "line_items_description": "ewz.tranche ET",
+      "line_items_description_in_original_language": "ewz.tranche ET",
+      "delivery_period": "01.03.2024-31.03.2024",
+      "quantity": "27797",
+      "quantity_unit": "kWh",
+      "unit_price": "0.15442",
+      "unit_price_unit": "",
+      "total_price": "4292.41",
+      "total_price_unit": "CHF",
+      "vat_amount": "347.685",
+      "vat_amount_unit": "CHF",
+      "total_price_incl_vat": "4640.1",
+      "total_price_incl_vat_unit": "CHF",
+      "meter_point": "CH1019901234500000000000000041085",
+      "meter_number": "",
+      "utility": "E",
+      "category": "Energie",
+      "tarif_product": "ewz.Marktlieferung",
+      "tax_category": "V81",
+      "tax_rate": "0.081",
+      "BZArt": "HT",
+      "VS_ID": "94119",
+      "VS_Search": "51345886",
+      "VS_Adr": "St. Leonhardstrasse 3",
+      "VS_Ort": "9000 St. Gallen"
+    }
+  ]
+}

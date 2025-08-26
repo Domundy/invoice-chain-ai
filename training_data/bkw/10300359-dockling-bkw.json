@@ -1,0 +1,251 @@
+{
+  "header": {
+    "filename": "PDIR.BKW.INVOICE.20240618-072716.305597.rdi",
+    "invoice_number": "751 204 415 439",
+    "invoice_date": "16.04.2024",
+    "due_date": "16.05.2024",
+    "customer_number": "80 342 923",
+    "contract_number": "50 572 093",
+    "vat_number": "CHE-103.258.498 MWST",
+    "billing_period": "01.03.2024-31.03.2024",
+    "total_amount_excl_vat": "1798.5",
+    "total_amount_excl_vat_unit": "CHF",
+    "vat_amount": "145.68",
+    "vat_amount_unit": "CHF",
+    "total_amount_incl_vat": "1944.18",
+    "total_amount_incl_vat_unit": "CHF",
+    "rounding_difference": "-0.03",
+    "rounding_difference_unit": "CHF",
+    "payable_amount": "1944.15",
+    "payable_amount_unit": "CHF",
+    "delivery_address": {
+      "description": "Normalnetz Eigenbedarf UST Mühleberg, NZ2.WC2.F01",
+      "type_of_delivery_location": "Nr. 462467",
+      "id_of_delivery_location": "",
+      "address_line1": "Wehrstrasse 47b",
+      "city_zip": "3203 Mühleberg"
+    },
+    "address": {
+      "recipient": "Primeo Energie AG",
+      "address_line1": "Ref. Swissgrid Ueberlandstrasse 2",
+      "reference": "",
+      "city_zip": "8953 Dietikon"
+    },
+    "provider": {
+      "name": "BKW Energie AG",
+      "address_line1": "Viktoriaplatz 2",
+      "city_zip": "3013 Bern"
+    },
+    "contact": {
+      "email": "",
+      "phone": "0844 121 139",
+      "website": "www.bkw.ch"
+    }
+  },
+  "meter_readings": [
+    {
+      "delivery_period": "01.03.2024-31.03.2024",
+      "meter_point": "CH1022201234500000000000000458561",
+      "meter_number": "10489973",
+      "meter_reading_description": "Monatliches Leistungsmaximum",
+      "meter_reading_factor": "1.015",
+      "meter_reading_consumption": "53.9",
+      "meter_reading_unit": "kW"
+    },
+    {
+      "delivery_period": "01.03.2024-31.03.2024",
+      "meter_point": "CH1022201234500000000000000458561",
+      "meter_number": "10489973",
+      "meter_reading_description": "Energie/Arbeit Hochtarif",
+      "meter_reading_factor": "1.015",
+      "meter_reading_consumption": "9726",
+      "meter_reading_unit": "kWh"
+    },
+    {
+      "delivery_period": "01.03.2024-31.03.2024",
+      "meter_point": "CH1022201234500000000000000458561",
+      "meter_number": "10489973",
+      "meter_reading_description": "Energie/Arbeit Niedertarif",
+      "meter_reading_factor": "1.015",
+      "meter_reading_consumption": "6392",
+      "meter_reading_unit": "kWh"
+    },
+    {
+      "delivery_period": "01.03.2024-31.03.2024",
+      "meter_point": "CH1022201234500000000000000458561",
+      "meter_number": "10489973",
+      "meter_reading_description": "Energie/Arbeit Total",
+      "meter_reading_factor": "1.015",
+      "meter_reading_consumption": "16118",
+      "meter_reading_unit": "kWh"
+    },
+    {
+      "delivery_period": "01.03.2024-31.03.2024",
+      "meter_point": "CH1022201234500000000000000458561",
+      "meter_number": "10489973",
+      "meter_reading_description": "Blindenergie gesamt Total",
+      "meter_reading_factor": "1.015",
+      "meter_reading_consumption": "3352",
+      "meter_reading_unit": "kvarh"
+    }
+  ],
+  "line_items": [
+    {
+      "line_items_description": "Grundtarif",
+      "line_items_description_in_original_language": "Grundtarif",
+      "delivery_period": "01.03.24-31.03.24",
+      "quantity": "31",
+      "quantity_unit": "Tage",
+      "unit_price": "912",
+      "unit_price_unit": "CHF/a",
+      "total_price": "77.46",
+      "total_price_unit": "CHF",
+      "meter_point": "CH1022201234500000000000000458561",
+      "meter_number": "10489973",
+      "utility": "",
+      "category": "Netznutzung",
+      "tarif_product": "Netznutzung MS",
+      "tax_category": "",
+      "BZArt": ""
+    },
+    {
+      "line_items_description": "Leistungstarif",
+      "line_items_description_in_original_language": "Leistungstarif",
+      "delivery_period": "01.03.24-31.03.24",
+      "quantity": "53.9",
+      "quantity_unit": "kW",
+      "unit_price": "14.64",
+      "unit_price_unit": "CHF",
+      "total_price": "789.1",
+      "total_price_unit": "CHF",
+      "meter_point": "CH1022201234500000000000000458561",
+      "meter_number": "10489973",
+      "utility": "",
+      "category": "Netznutzung",
+      "tarif_product": "Netznutzung MS",
+      "tax_category": "",
+      "BZArt": ""
+    },
+    {
+      "line_items_description": "Arbeit Hochtarif",
+      "line_items_description_in_original_language": "Arbeit Hochtarif",
+      "delivery_period": "01.03.24-31.03.24",
+      "quantity": "9726",
+      "quantity_unit": "kWh",
+      "unit_price": "1.71",
+      "unit_price_unit": "Rp.",
+      "total_price": "166.31",
+      "total_price_unit": "CHF",
+      "meter_point": "CH1022201234500000000000000458561",
+      "meter_number": "10489973",
+      "utility": "",
+      "category": "Netznutzung",
+      "tarif_product": "Netznutzung MS",
+      "tax_category": "",
+      "BZArt": ""
+    },
+    {
+      "line_items_description": "Arbeit Niedertarif",
+      "line_items_description_in_original_language": "Arbeit Niedertarif",
+      "delivery_period": "01.03.24-31.03.24",
+      "quantity": "6392",
+      "quantity_unit": "kWh",
+      "unit_price": "0.87",
+      "unit_price_unit": "Rp.",
+      "total_price": "55.61",
+      "total_price_unit": "CHF",
+      "meter_point": "CH1022201234500000000000000458561",
+      "meter_number": "10489973",
+      "utility": "",
+      "category": "Netznutzung",
+      "tarif_product": "Netznutzung MS",
+      "tax_category": "",
+      "BZArt": ""
+    },
+    {
+      "line_items_description": "Systemdienstleistungen Swissgrid",
+      "line_items_description_in_original_language": "Systemdienstleistungen Swissgrid",
+      "delivery_period": "01.03.24-31.03.24",
+      "quantity": "16118",
+      "quantity_unit": "kWh",
+      "unit_price": "0.75",
+      "unit_price_unit": "Rp.",
+      "total_price": "120.89",
+      "total_price_unit": "CHF",
+      "meter_point": "CH1022201234500000000000000458561",
+      "meter_number": "10489973",
+      "utility": "",
+      "category": "Netznutzung",
+      "tarif_product": "Netznutzung MS",
+      "tax_category": "",
+      "BZArt": ""
+    },
+    {
+      "line_items_description": "Stromreserve",
+      "line_items_description_in_original_language": "Stromreserve",
+      "delivery_period": "01.03.24-31.03.24",
+      "quantity": "16118",
+      "quantity_unit": "kWh",
+      "unit_price": "1.2",
+      "unit_price_unit": "Rp.",
+      "total_price": "193.42",
+      "total_price_unit": "CHF",
+      "meter_point": "CH1022201234500000000000000458561",
+      "meter_number": "10489973",
+      "utility": "",
+      "category": "Netznutzung",
+      "tarif_product": "Netznutzung MS",
+      "tax_category": "",
+      "BZArt": ""
+    },
+    {
+      "line_items_description": "Gesetzliche Förderabgabe",
+      "line_items_description_in_original_language": "Gesetzliche Förderabgabe",
+      "delivery_period": "01.03.24-31.03.24",
+      "quantity": "16118",
+      "quantity_unit": "kWh",
+      "unit_price": "2.3",
+      "unit_price_unit": "Rp.",
+      "total_price": "370.71",
+      "total_price_unit": "CHF",
+      "meter_point": "CH1022201234500000000000000458561",
+      "meter_number": "10489973",
+      "utility": "",
+      "category": "Rest",
+      "tarif_product": "",
+      "tax_category": "",
+      "BZArt": ""
+    },
+    {
+      "line_items_description": "Abgaben und Leistungen an die Gemeinde",
+      "line_items_description_in_original_language": "Abgaben und Leistungen an die Gemeinde",
+      "delivery_period": "01.03.24-31.03.24",
+      "quantity_unit": "",
+      "unit_price_unit": "",
+      "total_price": "25",
+      "total_price_unit": "CHF",
+      "meter_point": "CH1022201234500000000000000458561",
+      "meter_number": "10489973",
+      "utility": "",
+      "category": "Rest",
+      "tarif_product": "",
+      "tax_category": "",
+      "BZArt": ""
+    }
+  ],
+  "additional_key_value_pairs": [
+    {
+      "key": "IBAN BKW",
+      "value": "CH16 0900 0000 3000 03107"
+    },
+    {
+      "key": "Postkonto BKW",
+      "value": "30-310-7"
+    }
+  ],
+  "checks": {
+    "total_calculated": "1798.5",
+    "total_calculated_unit": "CHF",
+    "total_amount_excl_vat_check": true
+  }
+}

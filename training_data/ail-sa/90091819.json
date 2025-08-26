@@ -1,0 +1,72 @@
+{
+  "header": {
+    "filename": "90091819.pdf",
+    "invoice_number": "711.831.517",
+    "invoice_date": "21.05.2024",
+    "due_date": "20.06.2024",
+    "customer_number": "",
+    "contract_number": "",
+    "vat_number": "CHE-105.969.920",
+    "billing_period": "13.02.2024-21.05.2024",
+    "total_amount_excl_vat": "30.53",
+    "total_amount_excl_vat_unit": "CHF",
+    "vat_amount": "2.47",
+    "vat_amount_unit": "CHF",
+    "total_amount_incl_vat": "33.00",
+    "total_amount_incl_vat_unit": "CHF",
+    "rounding_difference": "0.00",
+    "rounding_difference_unit": "CHF",
+    "payable_amount": "33.00",
+    "payable_amount_unit": "CHF",
+    "delivery_address": {
+      "description": "",
+      "type_of_delivery_location": "",
+      "id_of_delivery_location": "",
+      "address_line1": "",
+      "city_zip": ""
+    },
+    "address": {
+      "recipient": "",
+      "address_line1": "",
+      "reference": "",
+      "city_zip": ""
+    },
+    "provider": {
+      "name": "AIL SA",
+      "address_line1": "C.P. 5131",
+      "city_zip": "6901 Lugano"
+    },
+    "contact": {
+      "email": "",
+      "phone": "",
+      "website": ""
+    }
+  },
+  "line_items": [
+    {
+      "line_items_description": "Richiesta d'acconto (IVA 8,1% inclusa)",
+      "line_items_description_in_original_language": "Richiesta d'acconto (IVA 8,1% inclusa)",
+      "delivery_period": "13.02.2024-21.05.2024",
+      "quantity": "0",
+      "quantity_unit": "",
+      "unit_price_unit": "",
+      "total_price": "30.53",
+      "total_price_unit": "CHF",
+      "vat_amount": "2.47271",
+      "vat_amount_unit": "CHF",
+      "total_price_incl_vat": "33",
+      "total_price_incl_vat_unit": "CHF",
+      "meter_point": "CH7000971234500000000000000001384",
+      "meter_number": "",
+      "utility": "G",
+      "category": "Rest",
+      "tax_category": "V81",
+      "tax_rate": "0.081",
+      "BZArt": "Akonto",
+      "VS_ID": "117874",
+      "VS_Search": "",
+      "VS_Adr": "APP.3P, Via Cantonale 10",
+      "VS_Ort": "6900 Lugano"
+    }
+  ]
+}
