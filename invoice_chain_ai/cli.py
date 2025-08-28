@@ -25,7 +25,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--pdf", required=False, type=Path, default=None, help="Path to the input PDF. Optional when using --structured-output with --run-dir.")
     parser.add_argument(
         "--parser",
-        choices=["docling", "marker"],  # removed "all"
+        choices=["docling", "marker"],
         required=False,
         default=None,
         help="Parser to use. Required unless --qr is provided. (docling or marker)",

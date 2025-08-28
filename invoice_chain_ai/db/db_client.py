@@ -1,7 +1,10 @@
 import os
 import json
 from pathlib import Path
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Callable
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Try to import psycopg (psycopg-binary). If not available, functions will be no-ops.
 try:
@@ -10,15 +13,20 @@ try:
 except Exception:
     psycopg = None  # type: ignore
 
-# NEW: traceable import
-from langsmith import traceable
+# Make langsmith optional: provide a no-op traceable decorator if missing
+try:
+    from langsmith import traceable  # type: ignore
+except Exception:
+    def traceable(*t_args, **t_kwargs) -> Callable:
+        def _decorator(fn):
+            return fn
+        return _decorator
 
-DATABASE_URL_ENV = "DATABASE_URL"
 DB_INIT_SQL = str(Path(__file__).parent / "init.sql")
 
 
 def _get_conn():
-    dsn = os.getenv(DATABASE_URL_ENV)
+    dsn = os.getenv("DATABASE_URL")
     if not dsn or psycopg is None:
         return None
     return psycopg.connect(dsn, row_factory=dict_row)
@@ -28,7 +36,6 @@ def _get_conn():
 def init_db():
     """
     Create schema by executing db/init.sql if present.
-    No automatic data insertion here.
     """
     conn = _get_conn()
     if conn is None:
@@ -43,30 +50,15 @@ def init_db():
                 if sql:
                     cur.execute(sql)
                 else:
-                    # fallback minimal schema (added customer_prompt column)
+                    # fallback minimal single-table schema
                     cur.execute(
                         """
                         CREATE TABLE IF NOT EXISTS customers (
                             id SERIAL PRIMARY KEY,
                             name TEXT NOT NULL,
                             customer_prompt TEXT,
+                            ibans TEXT[] DEFAULT ''::text[],
                             created_at TIMESTAMPTZ DEFAULT now()
-                        );
-                        CREATE TABLE IF NOT EXISTS accounts (
-                            id SERIAL PRIMARY KEY,
-                            customer_id INTEGER REFERENCES customers(id) ON DELETE CASCADE,
-                            iban TEXT UNIQUE
-                        );
-                        CREATE TABLE IF NOT EXISTS addresses (
-                            id SERIAL PRIMARY KEY,
-                            customer_id INTEGER REFERENCES customers(id) ON DELETE CASCADE,
-                            address_type TEXT,
-                            name TEXT,
-                            line1 TEXT,
-                            line2 TEXT,
-                            postal_code TEXT,
-                            city TEXT,
-                            country TEXT
                         );
                         """
                     )
@@ -75,46 +67,31 @@ def init_db():
         conn.close()
 
 
-# Internal helpers (used by lookups and seeder)
+# Internal helpers
 def _find_customer_by_iban(conn, iban: str) -> Optional[Dict[str, Any]]:
     if not iban:
         return None
     with conn.cursor() as cur:
         cur.execute(
-            "SELECT customers.id, customers.name FROM customers JOIN accounts ON accounts.customer_id = customers.id WHERE accounts.iban = %s LIMIT 1;",
+            "SELECT id, name, customer_prompt, ibans FROM customers WHERE %s = ANY(ibans) LIMIT 1;",
             (iban,),
         )
         return cur.fetchone()
 
-def _find_customer_by_name_city(conn, name: str, city: str) -> Optional[Dict[str, Any]]:
-    if not name:
-        return None
-    with conn.cursor() as cur:
-        if city:
-            cur.execute(
-                "SELECT customers.id, customers.name FROM customers JOIN addresses ON addresses.customer_id = customers.id WHERE lower(customers.name) = lower(%s) AND lower(addresses.city) = lower(%s) LIMIT 1;",
-                (name, city),
-            )
-            r = cur.fetchone()
-            if r:
-                return r
-        cur.execute("SELECT id, name FROM customers WHERE lower(name) = lower(%s) LIMIT 1;", (name,))
-        return cur.fetchone()
 
-
-def _insert_customer(conn, name: str, customer_prompt: str | None = None) -> Optional[int]:
+def _insert_customer(conn, name: str, customer_prompt: Optional[str], ibans: Optional[List[str]] = None) -> Optional[int]:
     """
-    Insert a customer and optional customer_prompt. Returns inserted customer id.
+    Insert a customer and return inserted customer id.
+    ibans should be a list of strings or None.
     """
     with conn.cursor() as cur:
         cur.execute(
-            "INSERT INTO customers (name, customer_prompt) VALUES (%s, %s) RETURNING id;",
-            (name, customer_prompt),
+            "INSERT INTO customers (name, customer_prompt, ibans) VALUES (%s, %s, %s) RETURNING id;",
+            (name, customer_prompt, ibans),
         )
         row = cur.fetchone()
         if not row:
             return None
-        # support dict_row (dict) or tuple result
         if isinstance(row, dict):
             return row.get("id")
         try:
@@ -123,50 +100,7 @@ def _insert_customer(conn, name: str, customer_prompt: str | None = None) -> Opt
             return None
 
 
-def _ensure_account(conn, customer_id: int, iban: Optional[str]):
-    if not iban:
-        return
-    with conn.cursor() as cur:
-        cur.execute(
-            "INSERT INTO accounts (customer_id, iban) VALUES (%s, %s) ON CONFLICT (iban) DO NOTHING RETURNING id;",
-            (customer_id, iban),
-        )
-        return cur.fetchone()
-
-
-def _ensure_address(conn, customer_id: int, addr: Dict[str, Any]):
-    with conn.cursor() as cur:
-        cur.execute(
-            """
-            SELECT id FROM addresses
-            WHERE customer_id = %s AND coalesce(lower(line1),'') = coalesce(lower(%s),'') AND coalesce(lower(postal_code),'') = coalesce(lower(%s),'') AND coalesce(lower(city),'') = coalesce(lower(%s),'')
-            LIMIT 1;
-            """,
-            (customer_id, addr.get("address_line_1"), addr.get("postal_code"), addr.get("city")),
-        )
-        exists = cur.fetchone()
-        if exists:
-            return exists["id"]
-        cur.execute(
-            """
-            INSERT INTO addresses (customer_id, address_type, name, line1, line2, postal_code, city, country)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id;
-            """,
-            (
-                customer_id,
-                addr.get("address_type"),
-                addr.get("name"),
-                addr.get("address_line_1"),
-                addr.get("address_line_2"),
-                addr.get("postal_code"),
-                addr.get("city"),
-                addr.get("country"),
-            ),
-        )
-        return cur.fetchone()["id"]
-
-
-# PUBLIC lookup functions (no auto-create)
+# PUBLIC lookup functions
 @traceable(name="Get Customer by IBAN")
 def get_customer_by_iban(iban: str) -> Optional[Dict[str, Any]]:
     conn = _get_conn()
@@ -177,79 +111,33 @@ def get_customer_by_iban(iban: str) -> Optional[Dict[str, Any]]:
             cust = _find_customer_by_iban(conn, iban)
             if not cust:
                 return None
-            customer_id = cust["id"]
-            with conn.cursor() as cur:
-                cur.execute("SELECT iban FROM accounts WHERE customer_id = %s;", (customer_id,))
-                accounts = [r["iban"] for r in cur.fetchall()]
-                cur.execute(
-                    "SELECT address_type, name, line1, line2, postal_code, city, country FROM addresses WHERE customer_id = %s;",
-                    (customer_id,),
-                )
-                addresses = [dict(r) for r in cur.fetchall()]
-            result = {"customer": dict(cust), "accounts": accounts, "addresses": addresses}
-            return result
+            return {"customer": dict(cust)}
     finally:
         conn.close()
 
 
-@traceable(name="Get Customer by QR Name/City")
-def get_customer_by_name_city(name: str, city: str | None = None) -> Optional[Dict[str, Any]]:
-    conn = _get_conn()
-    if conn is None:
-        return None
-    try:
-        with conn:
-            cust = _find_customer_by_name_city(conn, name, city or "")
-            if not cust:
-                return None
-            customer_id = cust["id"]
-            with conn.cursor() as cur:
-                cur.execute("SELECT iban FROM accounts WHERE customer_id = %s;", (customer_id,))
-                accounts = [r["iban"] for r in cur.fetchall()]
-                cur.execute(
-                    "SELECT address_type, name, line1, line2, postal_code, city, country FROM addresses WHERE customer_id = %s;",
-                    (customer_id,),
-                )
-                addresses = [dict(r) for r in cur.fetchall()]
-            result = {"customer": dict(cust), "accounts": accounts, "addresses": addresses}
-            return result
-    finally:
-        conn.close()
-
-
-@traceable(name="Get Customer by QR iban")
+@traceable(name="Get Customer by Invoice (IBAN)")
 def get_customer_by_invoice(parsed_invoice: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """
-    Try to find a customer for the parsed_invoice without creating new rows.
+    Try to find a customer for the parsed_invoice based on the iban.
     Returns None if no match.
     """
     iban = parsed_invoice.get("iban")
-    creditor = parsed_invoice.get("creditor") or {}
-    # trace will capture the parsed_invoice input and the returned value
-    if iban:
-        found = get_customer_by_iban(iban)
-        if found:
-            return found
-    name = creditor.get("name")
-    city = creditor.get("city")
-    if name:
-        found = get_customer_by_name_city(name, city)
-        return found
-    return None
+    if not iban:
+        return None
+    return get_customer_by_iban(iban)
 
 
-# Explicit seeding function (call only when you want to import data)
 def seed_customers_from_json(json_path: str) -> Dict[str, Any]:
     """
     Load customers from a JSON file and insert into DB.
-    Expected format: [{ "name": "...", "accounts": ["IBAN..."], "addresses": [{...}, ...], "customer_prompt": "..." }, ...]
-    This function now clears existing tables and seeds fresh data from the JSON.
+    Expected format: [{ "name": "...", "customer_prompt": "...", "ibans": ["IBAN...","..."] }, ...]
+    This function clears existing customers and seeds fresh data from the JSON.
     """
     # Ensure DB schema exists / is migrated before seeding
     try:
         init_res = init_db()
     except Exception as e:
-        # If init_db raises, surface an error to caller
         return {"error": f"init_db failed: {e}"}
 
     conn = _get_conn()
@@ -262,22 +150,16 @@ def seed_customers_from_json(json_path: str) -> Dict[str, Any]:
     inserted = 0
     try:
         with conn:
-            # Wipe existing data so seeding results in a fresh DB
             with conn.cursor() as cur:
-                # truncate in one statement and restart serials
-                cur.execute("TRUNCATE TABLE accounts, addresses, customers RESTART IDENTITY CASCADE;")
-
+                cur.execute("TRUNCATE TABLE customers RESTART IDENTITY CASCADE;")
             for item in data:
                 name = item.get("name") or "unknown"
                 cust_prompt = item.get("customer_prompt")
-                # create customer with prompt
-                cust_id = _insert_customer(conn, name, cust_prompt)
-                # accounts
-                for iban in item.get("accounts", []):
-                    _ensure_account(conn, cust_id, iban)
-                # addresses
-                for addr in item.get("addresses", []):
-                    _ensure_address(conn, cust_id, addr)
+                ibans = item.get("ibans") or []
+                # ensure list type for psycopg to map to text[]
+                if not isinstance(ibans, list):
+                    ibans = [ibans] if ibans else []
+                _insert_customer(conn, name, cust_prompt, ibans)
                 inserted += 1
         return {"inserted": inserted}
     finally:
@@ -286,14 +168,10 @@ def seed_customers_from_json(json_path: str) -> Dict[str, Any]:
 
 def choose_prompt(customer_info: Dict[str, Any]) -> str:
     """
-    Basic prompt selection based on customer metadata.
+    Return the stored customer_prompt if present; otherwise 'default'.
     """
     if not customer_info:
         return "default"
-    addresses = customer_info.get("addresses") or []
-    for a in addresses:
-        if a.get("country") and a.get("country").upper() != "CH":
-            return "intl_prompt"
-    if len(customer_info.get("accounts", [])) > 1:
-        return "multi_account_prompt"
-    return "default"
+    cust = customer_info.get("customer") or {}
+    prompt = cust.get("customer_prompt")
+    return prompt if prompt else "default"

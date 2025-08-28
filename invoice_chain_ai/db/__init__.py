@@ -15,47 +15,24 @@ def _load_customers() -> list[dict]:
         return []
 
 
-def get_customer_by_invoice(invoice: str) -> Optional[dict]:
-    """
-    Try to find a customer by matching the invoice string to known accounts (IBAN)
-    or by substring match on addresses/name.
-    """
-    customers = _load_customers()
-    inv_clean = (invoice or "").replace(" ", "")
-    for c in customers:
-        # accounts match (IBAN)
-        for acc in c.get("accounts", []):
-            if acc.replace(" ", "") in inv_clean or inv_clean in acc.replace(" ", ""):
-                return c
-        # fallback: name/address substring match
-        name = c.get("name", "")
-        if name and name.lower() in (invoice or "").lower():
-            return c
-        for addr in c.get("addresses", []):
-            if any(
-                (v and v.lower() in (invoice or "").lower())
-                for v in addr.values()
-                if isinstance(v, str)
-            ):
-                return c
-    return None
+# Export commonly used helpers from db_client for package-level imports
+from .db_client import (
+    get_customer_by_iban,
+    get_customer_by_invoice,
+    choose_prompt,
+    init_db,
+    seed_customers_from_json,
+)
 
-
-def choose_prompt(customer: Optional[dict]) -> str:
-    """
-    Return the customer's prompt text if present; otherwise return a default prompt.
-    Accepts either the customer dict or a wrapper like {"customer": {...}}.
-    """
-    if not customer:
-        return "Extract invoice data into the provided schema. Use the document context."
-    # Unwrap if passed a wrapper
-    if "customer" in customer and isinstance(customer["customer"], dict):
-        c = customer["customer"]
+# Simple CLI utility to avoid an empty `if __name__ == "__main__":` block
+if __name__ == "__main__":
+    import sys
+    # Usage:
+    #   python -m invoice_chain_ai.db init
+    #   python -m invoice_chain_ai.db seed <json_path>
+    if len(sys.argv) >= 2 and sys.argv[1] == "init":
+        print(init_db())
+    elif len(sys.argv) >= 3 and sys.argv[1] == "seed":
+        print(seed_customers_from_json(sys.argv[2]))
     else:
-        c = customer
-    prompt = c.get("customer_prompt") or c.get("prompt") or ""
-    if prompt:
-        return prompt
-    return f"Extract invoice data for {c.get('name','the customer')} into the JSON schema."
-
-__all__ = ["get_customer_by_invoice", "choose_prompt", "DATA_DIR", "SEED_FILE"]
+        print("Usage: python -m invoice_chain_ai.db init | seed <json_path>")

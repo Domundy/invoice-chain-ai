@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS customers (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     customer_prompt TEXT,
+    ibans TEXT [] DEFAULT '{}'::text [],
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -23,5 +24,8 @@ CREATE TABLE IF NOT EXISTS addresses (
     country TEXT
 );
 
--- Ensure column exists on pre-existing installations
+-- Ensure columns exist on pre-existing installations
 ALTER TABLE customers ADD COLUMN IF NOT EXISTS customer_prompt TEXT;
+
+ALTER TABLE customers
+ADD COLUMN IF NOT EXISTS ibans TEXT [] DEFAULT '{}'::text [];

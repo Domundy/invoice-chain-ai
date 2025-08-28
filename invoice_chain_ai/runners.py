@@ -10,11 +10,14 @@ from langsmith import traceable
 
 from .parsers import convert_pdf_to_markdown
 from .qr import scan_qr_code
-from .db import get_customer_by_invoice, choose_prompt
+from .db.db_client import get_customer_by_iban, choose_prompt
 from .io_utils import write_markdown
 from .structured_output import run_structured_output_modern
 
 handler = ConsoleCallbackHandler()
+
+# add import for postprocess logic
+from .postprocess_bz import enrich_bz_art
 
 @traceable(name="Scan QR Code")
 def scan_qr_trace(pdf_path: Path, run_dir: Path, use_heuristic: bool = False):
@@ -59,59 +62,54 @@ def _normalize_invoice_field(inv) -> str:
 
 def run_processing(copied_pdf: Optional[Path], parser_name: str | None, use_llm: bool, qr_only: bool, run_dir: Path, structured_output_flag: bool = False) -> int:
     try:
+        # Initialize QR state variables so they exist for all branches
+        qr_info = None
+        qr_result = None
+
         # Structured-output-only mode (no parser requested)
         if structured_output_flag and parser_name is None:
-            # Look for markdown inside run_dir (prefer docling, then marker)
-            md_candidates = list(run_dir.glob("*.docling.md")) + list(run_dir.glob("*.marker.md"))
-            if not md_candidates:
-                print(f"Error: no markdown (.docling.md or .marker.md) found in {run_dir}", file=sys.stderr)
-                return 2
-            md_path = md_candidates[0]
-
-            customer_json_path = run_dir / "customer.json"
-            if not customer_json_path.exists():
-                print(f"Error: customer.json not found in run directory {run_dir}", file=sys.stderr)
-                return 2
-
-            try:
-                cust = json.loads(customer_json_path.read_text(encoding="utf-8"))
-                customer_prompt = choose_prompt(cust)
-            except Exception as e:
-                print(f"Error: could not read/parse customer.json: {e}", file=sys.stderr)
-                return 2
-
-            try:
-                structured_result = run_structured_output_modern(md_path, customer_prompt, run_dir)
-                so_out = run_dir / "structured_output.json"
-                so_out.write_text(json.dumps(structured_result, ensure_ascii=False, indent=4), encoding="utf-8")
-                print(f"Wrote structured output: {so_out}")
-                return 0
-            except Exception as e:
-                print(f"❌ Structured output step failed: {e}", file=sys.stderr)
-                return 4
+            # ...existing code...
+            return 0
 
         # From here, require a copied_pdf for the usual flows
         if copied_pdf is None:
             print("Error: PDF path is required for parsing/QR operations.", file=sys.stderr)
             return 2
 
-        # QR-only mode (explicit: no heuristic)
-        if qr_only and parser_name is None:
+        # --- New: QR-only mode handling ---
+        if qr_only:
+            # run QR scanner (no heuristic first)
             qr_runnable = RunnableLambda(lambda _: scan_qr_trace(copied_pdf, run_dir, use_heuristic=False), name="QR Scanner")
-            # invoke synchronously, serial execution ensured by sequential invoke calls
-            result = qr_runnable.invoke(None, config={"callbacks": [handler]})
-            qr_info = result.get("qr_result") if isinstance(result, dict) else None
-            if qr_info and isinstance(qr_info, dict) and qr_info.get("invoice"):
-                search_val = _normalize_invoice_field(qr_info["invoice"])
-                cust = get_customer_by_invoice(search_val)
+            qr_result = qr_runnable.invoke(None, config={"callbacks": [handler]})
+
+            # If no QR found, retry with heuristic (uses written markdown if available)
+            if qr_result.get("qr_result") is None:
+                print("No Swiss QR code found. Retrying with heuristic...")
+                qr_runnable_h = RunnableLambda(lambda _: scan_qr_trace(copied_pdf, run_dir, use_heuristic=True), name="QR Scanner (heuristic)")
+                qr_result = qr_runnable_h.invoke(None, config={"callbacks": [handler]})
+
+            if qr_result.get("qr_result") is None:
+                print("No Swiss QR code found.")
+                return 1
+
+            qr_info = qr_result.get("qr_result")
+            if isinstance(qr_info, dict) and qr_info.get("invoice"):
+                parsed_invoice = qr_info["invoice"]
+                # normalize invoice payload (dict or str) and try IBAN lookup
+                search_val = _normalize_invoice_field(parsed_invoice)
+                cust = get_customer_by_iban(search_val)
                 if not cust:
-                    print("Error: customer not found by IBAN or address. Aborting.", file=sys.stderr)
+                    print("Error: customer not found by IBAN. Aborting.", file=sys.stderr)
                     return 5
+
+                # Write the full customer JSON and include the selected prompt
                 cust_out = run_dir / "customer.json"
-                cust_out.write_text(json.dumps(cust, ensure_ascii=False, indent=4), encoding="utf-8")
                 prompt_key = choose_prompt(cust)
-                print(f"Selected prompt: {prompt_key}")
-            return 0 if result and result.get("qr_result") is not None else 1
+                # Ensure we write a dict so we can append the prompt consistently
+                cust_to_write = dict(cust) if isinstance(cust, dict) else {"customer": cust}
+                cust_to_write["customer_prompt"] = prompt_key
+                cust_out.write_text(json.dumps(cust_to_write, ensure_ascii=False, indent=4), encoding="utf-8")
+                return 0 if qr_result and qr_result.get("qr_result") is not None else 1
 
         # Single parser modes: run parser first, write markdown, then QR (with heuristic fallback)
         if parser_name in ["docling", "marker"]:
@@ -146,15 +144,16 @@ def run_processing(copied_pdf: Optional[Path], parser_name: str | None, use_llm:
                 print("✅ QR code extraction completed")
                 qr_info = qr_result.get("qr_result")
                 if isinstance(qr_info, dict) and qr_info.get("invoice"):
-                    search_val = _normalize_invoice_field(qr_info["invoice"])
-                    cust = get_customer_by_invoice(search_val)
+                    parsed_invoice = qr_info["invoice"]
+                    # Normalize invoice payload and try IBAN lookup
+                    search_val = _normalize_invoice_field(parsed_invoice)
+                    cust = get_customer_by_iban(search_val)
                     if not cust:
-                        print("Error: customer not found by IBAN or address. Aborting.", file=sys.stderr)
+                        print("Error: customer not found by IBAN. Aborting.", file=sys.stderr)
                         return 5
                     cust_out = run_dir / "customer.json"
                     cust_out.write_text(json.dumps(cust, ensure_ascii=False, indent=4), encoding="utf-8")
                     prompt_key = choose_prompt(cust)
-                    print(f"Selected prompt: {prompt_key}")
 
             # At this point QR may have been extracted and customer.json may exist
             # If user requested structured output, run LLM-based structured extraction using customer prompt + markdown
@@ -176,12 +175,19 @@ def run_processing(copied_pdf: Optional[Path], parser_name: str | None, use_llm:
                     # written is the path returned from write_markdown (string or Path)
                     md_path = Path(written)
                     structured_result = run_structured_output_modern(md_path, customer_prompt, run_dir)
-                    so_out = run_dir / "structured_output.json"
+                    so_out = run_dir / "raw_structured_output.json"
                     so_out.write_text(json.dumps(structured_result, ensure_ascii=False, indent=4), encoding="utf-8")
                     print(f"Wrote structured output: {so_out}")
                 except Exception as e:
                     print(f"❌ Structured output step failed: {e}", file=sys.stderr)
                     # don't fail the whole run for structured-output failure; continue
+
+                # NEW: attempt BZArt enrichment after structured output
+                try:
+                    enriched = enrich_bz_art(so_out, run_dir)
+                    print(f"Wrote BZ-enriched structured output: {run_dir / 'enriched_structured_output.json'}")
+                except Exception as e:
+                    print(f"Warning: BZArt enrichment failed: {e}", file=sys.stderr)
             return 0
 
         # 'all' engines - run parsers first, then QR (with heuristic fallback)
@@ -259,15 +265,15 @@ def run_processing(copied_pdf: Optional[Path], parser_name: str | None, use_llm:
             else:
                 outputs["qr"] = qr_result["qr_result"]
                 if isinstance(outputs["qr"], dict) and outputs["qr"].get("invoice"):
+                    # Normalize invoice payload and try IBAN lookup
                     search_val = _normalize_invoice_field(outputs["qr"]["invoice"])
-                    cust = get_customer_by_invoice(search_val)
+                    cust = get_customer_by_iban(search_val)
                     if not cust:
-                        print("Error: customer not found by IBAN or address. Aborting.", file=sys.stderr)
+                        print("Error: customer not found by IBAN. Aborting.", file=sys.stderr)
                         return 5
                     cust_out = run_dir / "customer.json"
                     cust_out.write_text(json.dumps(cust, ensure_ascii=False, indent=4), encoding="utf-8")
                     prompt_key = choose_prompt(cust)
-                    print(f"Selected prompt: {prompt_key}")
 
             out_json = run_dir / "run_output.json"
             out_json.write_text(json.dumps(outputs, ensure_ascii=False, indent=4), encoding="utf-8")

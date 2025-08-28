@@ -1,92 +1,37 @@
 [
     {
         "name": "Aziende Industriali di Lugano (AIL) SA",
-        "accounts": [
+        "ibans": [
             "CH0230000004690003873"
         ],
-        "addresses": [
-            {
-                "address_type": "S",
-                "name": "Aziende Industriali di Lugano (AIL) SA",
-                "address_line_1": "Casella postale",
-                "address_line_2": "",
-                "postal_code": "6901",
-                "city": "Lugano",
-                "country": "CH"
-            }
-        ],
-        "customer_prompt": "Extract invoice header and line items for AIL. Return JSON following the provided schema.\n\n## AIL-Specific Instructions\n\n- The invoices are in Italian\n- Store the Invoice Number WITHOUT dots. GOOD: 10267775 BAD: 10.267.7775"
+        "customer_prompt": "## AIL-Specific Instructions\n\n- The invoices are in Italian\n- Store the Invoice Number WITHOUT dots. GOOD: 10267775 BAD: 10.267.7775"
     },
     {
         "name": "BKW Energie AG",
-        "accounts": [
+        "ibans": [
             "CH4030000008300003107"
         ],
-        "addresses": [
-            {
-                "address_type": "K",
-                "name": "BKW Energie AG",
-                "address_line_1": "Viktoriaplatz 2",
-                "address_line_2": "3013 Bern",
-                "postal_code": "",
-                "city": "",
-                "country": "CH"
-            }
-        ],
-        "customer_prompt": "Extract invoice header and energy line items for BKW Energie AG. Return JSON following the provided schema.\n\n## BKW-Specific Instructions\n\n- The invoices are in German\n### Exclusions\n- Skip all lines marked as \"verrechnungsfrei\"\n- Abgaben are NOT part of the \"Rest\" category. They are part of Netznutzung\n\n### Energy Tariffs\n- High tariff (HT) and low tariff (NT): Separate line items\n- Network usage: Split into DL_HT and DL_NT\n\n### Fee Categorization\n- Energy basic fee -> Geb_G\n- Network basic fee -> DL_Geb"
+        "customer_prompt": "## BKW-Specific Instructions\n\n- The invoices are in German\n### Exclusions\n- Skip all lines marked as \"verrechnungsfrei\"\n- Abgaben are NOT part of the \"Rest\" category. They are part of Netznutzung\n\n### Energy Tariffs\n- High tariff (HT) and low tariff (NT): Separate line items\n- Network usage: Split into DL_HT and DL_NT\n\n### Fee Categorization\n- Energy basic fee -> Geb_G\n- Network basic fee -> DL_Geb"
     },
     {
         "name": "Stadt Zürich Elektrizitätswerk",
-        "accounts": [
+        "ibans": [
             "CH9730000001156819940"
         ],
-        "addresses": [
-            {
-                "address_type": "S",
-                "name": "Stadt Zürich Elektrizitätswerk",
-                "address_line_1": "",
-                "address_line_2": "",
-                "postal_code": "8050",
-                "city": "Zürich",
-                "country": "CH"
-            }
-        ],
-        "customer_prompt": "Extract invoice data for Stadt Zürich Elektrizitätswerk. Return JSON following the provided schema.\n\n## EWZ-Specific Instructions\n\n- The invoices are in German\n\n### Line Items\n- Show line items seperate for each meter point. If a meter point has multiple line items, they should be listed separately.\n\nsample table Meter Point 1:\n| Netznutzung                         | Menge    | Preis in CHF   | MWST in %   | Betrag in CHF   |\n|-------------------------------------|----------|----------------|-------------|-----------------|\n| 01.02.2024 bis 29.02.2024 (29 Tage) |          |                |             |                 |\n| Wirkenergie HT                      | 295 kWh  | 0.084500       | 8,1         | 24.93           |\n| Wirkenergie NT                      | 46 kWh   | 0.052000       | 8,1         | 2.39            |\n| Leistung HT                         | 4 kW     | 13.000000      | 8,1         | 52.00           |\n\nsample table Meter Point 2:\n| Netznutzung                         | Menge    | Preis in CHF   | MWST in %   | Betrag in CHF   |\n|-------------------------------------|----------|----------------|-------------|-----------------|\n| 01.02.2024 bis 29.02.2024 (29 Tage) |          |                |             |                 |\n| Wirkenergie HT                      | 234 kWh  | 0.084500       | 8,1         | 19.77           |\n| Wirkenergie NT                      | 23 kWh   | 0.052000       | 8,1         | 1.20            |\n| Leistung HT                         | 1 kW     | 13.000000      | 8,1         | 13.00           |\n\nGOOD:\n- Line item 1 Meterpoint 1: Wirkenergie HT\n- Line item 2 Meterpoint 1: Wirkenergie NT\n- Line item 3 Meterpoint 1: Leistung HT\n- Line item 1 Meterpoint 2: Wirkenergie HT\n- Line item 2 Meterpoint 2: Wirkenergie NT\n- Line item 3 Meterpoint 2: Leistung HT"
+        "customer_prompt": "## EWZ-Specific Instructions\n\n- The invoices are in German\n\n### Line Items\n- Show line items seperate for each meter point. If a meter point has multiple line items, they should be listed separately.\n\nsample table Meter Point 1:\n| Netznutzung                         | Menge    | Preis in CHF   | MWST in %   | Betrag in CHF   |\n|-------------------------------------|----------|----------------|-------------|-----------------|\n| 01.02.2024 bis 29.02.2024 (29 Tage) |          |                |             |                 |\n| Wirkenergie HT                      | 295 kWh  | 0.084500       | 8,1         | 24.93           |\n| Wirkenergie NT                      | 46 kWh   | 0.052000       | 8,1         | 2.39            |\n| Leistung HT                         | 4 kW     | 13.000000      | 8,1         | 52.00           |\n\nsample table Meter Point 2:\n| Netznutzung                         | Menge    | Preis in CHF   | MWST in %   | Betrag in CHF   |\n|-------------------------------------|----------|----------------|-------------|-----------------|\n| 01.02.2024 bis 29.02.2024 (29 Tage) |          |                |             |                 |\n| Wirkenergie HT                      | 234 kWh  | 0.084500       | 8,1         | 19.77           |\n| Wirkenergie NT                      | 23 kWh   | 0.052000       | 8,1         | 1.20            |\n| Leistung HT                         | 1 kW     | 13.000000      | 8,1         | 13.00           |\n\nGOOD:\n- Line item 1 Meterpoint 1: Wirkenergie HT\n- Line item 2 Meterpoint 1: Wirkenergie NT\n- Line item 3 Meterpoint 1: Leistung HT\n- Line item 1 Meterpoint 2: Wirkenergie HT\n- Line item 2 Meterpoint 2: Wirkenergie NT\n- Line item 3 Meterpoint 2: Leistung HT"
     },
     {
         "name": "IWB Industrielle Werke Basel",
-        "accounts": [
+        "ibans": [
             "CH5030000001400000659"
         ],
-        "addresses": [
-            {
-                "address_type": "S",
-                "name": "IWB Industrielle Werke Basel",
-                "address_line_1": "Margarethenstrasse",
-                "address_line_2": "40",
-                "postal_code": "4002",
-                "city": "Basel",
-                "country": "CH"
-            }
-        ],
-        "customer_prompt": "Extract invoice data for IWB Industrielle Werke Basel. Return JSON following the provided schema.\n\n## IWB-Specific Instructions\n        \n- The invoices are in German\n- city_zip and provider city_zip are in the format \"City ZIP\" (e.g., 4002, or 4002 Basel)\n- Show the line items separately.\n\nSample table:\n| Bezeichnung                | Dauer               | Faktor   | Preis pro Einheit   | Preis pro Einheit   | Menge     | Menge   | Betrag   |\n|----------------------------|---------------------|----------|---------------------|---------------------|-----------|---------|----------|\n| NNE Normaltarif Zone 1     | 01.05.23 - 31.05.23 |          | 8.40                | Rp                  | 4 167.00  | kWh     | 350.03   |\n| NNE Normaltarif Zone 2     | 01.05.23 - 31.05.23 |          | 5.30                | Rp                  | 13 504.13 | kWh     | 715.72   |\n| NNE Spartarif Zone 1       | 01.05.23 - 31.05.23 |          | 5.60                | Rp                  | 4 167.00  | kWh     | 233.35   |\n\nGOOD:\n- NNE Normaltarif Zone 1\n- NNE Normaltarif Zone 2\n- NNE Spartarif Zone 1"
+        "customer_prompt": "## IWB-Specific Instructions\n\n- The invoices are in German\n- city_zip and provider city_zip are in the format \"City ZIP\" (e.g., 4002, or 4002 Basel)\n- Show the line items separately.\n\nSample table:\n| Bezeichnung                | Dauer               | Faktor   | Preis pro Einheit   | Preis pro Einheit   | Menge     | Menge   | Betrag   |\n|----------------------------|---------------------|----------|---------------------|---------------------|-----------|---------|----------|\n| NNE Normaltarif Zone 1     | 01.05.23 - 31.05.23 |          | 8.40                | Rp                  | 4 167.00  | kWh     | 350.03   |\n| NNE Normaltarif Zone 2     | 01.05.23 - 31.05.23 |          | 5.30                | Rp                  | 13 504.13 | kWh     | 715.72   |\n| NNE Spartarif Zone 1       | 01.05.23 - 31.05.23 |          | 5.60                | Rp                  | 4 167.00  | kWh     | 233.35   |\n\nGOOD:\n- NNE Normaltarif Zone 1\n- NNE Normaltarif Zone 2\n- NNE Spartarif Zone 1"
     },
     {
         "name": "SERVICES INDUSTRIELS DE GENEVE",
-        "accounts": [
+        "ibans": [
             "CH9630000001120002250"
         ],
-        "addresses": [
-            {
-                "address_type": "S",
-                "name": "SERVICES INDUSTRIELS DE GENEVE",
-                "address_line_1": "Chemin du Chateau Bloch",
-                "address_line_2": "2",
-                "postal_code": "1211",
-                "city": "GENEVE 2",
-                "country": "CH"
-            }
-        ],
-        "customer_prompt": "Extract invoice data for SERVICES INDUSTRIELS DE GENEVE. Return JSON following the provided schema.\n\n## SIG-Specific Instructions  \n\n- The invoices are in French\n- Line item addresses come from \"Lieu de consommation\"\n\nWhen extracting data from a table like the one below, the top row must be ignored because it represents a summary, and the values in the child rows sum up to it. Only the child rows contain the detailed data that should be extracted.\n\nExample table:\n\n| Summary Row Example         |                 |           |           534.04 |            |\n| Child Row 1                 | kWh 2'667.8     | 0.1395    |           372.16 | 8.1        |\n| Child Row 2                 | kWh 1'704.0     | 0.0950    |           161.88 | 8.1        |\n\nExpected behavior: Extract only the child rows, ignoring the summary row. But you must consider the description of the main row for the description of the child rows.\n\n- Some line items only have a description and price - still include them. As long as it is not a summary of the following rows.\n\nSomething like this:\n\n| Energie réactive                                                                                 |                 |           |            85.16 |            |\n| Consommation - franchise                                                                         | kvarh 2'433.0   | 0.0350    |            85.16 | 8.1        |\n\nExpected description: Energie réactive Consommation - franchise"
+        "customer_prompt": "## SIG-Specific Instructions  \n\n- The invoices are in French\n- Line item addresses come from \"Lieu de consommation\"\n\nWhen extracting data from a table like the one below, the top row must be ignored because it represents a summary, and the values in the child rows sum up to it. Only the child rows contain the detailed data that should be extracted.\n\nExample table:\n\n| Summary Row Example         |                 |           |           534.04 |            |\n| Child Row 1                 | kWh 2'667.8     | 0.1395    |           372.16 | 8.1        |\n| Child Row 2                 | kWh 1'704.0     | 0.0950    |           161.88 | 8.1        |\n\nExpected behavior: Extract only the child rows, ignoring the summary row. But you must consider the description of the main row for the description of the child rows.\n\n- Some line items only have a description and price - still include them. As long as it is not a summary of the following rows.\n\nSomething like this:\n\n| Energie réactive                                                                                 |                 |           |            85.16 |            |\n| Consommation - franchise                                                                         | kvarh 2'433.0   | 0.0350    |            85.16 | 8.1        |\n\nExpected description: Energie réactive Consommation - franchise"
     }
 ]
