@@ -18,7 +18,6 @@ def _load_customers() -> list[dict]:
 # Export commonly used helpers from db_client for package-level imports
 from .db_client import (
     get_customer_by_iban,
-    get_customer_by_invoice,
     choose_prompt,
     init_db,
     seed_customers_from_json,

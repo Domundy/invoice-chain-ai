@@ -1,0 +1,36 @@
+{
+  "raw_qr_text": "SPC\n0200\n1\nCH0230000004690003873\nS\nAziende Industriali di Lugano (AIL) SA\nCasella postale\n\n6901\nLugano\nCH\n\n\n\n\n\n\n\n2492.70\nCHF\nS\nPrimeo Energie AG\nÜberlandstrasse\n2\n8953\nDietikon\nCH\nQRR\n000002090739000008000568027\n\nEPD",
+  "parsed_invoice": {
+    "qr_type": "SPC",
+    "version": "0200",
+    "coding_type": "1",
+    "iban": "CH0230000004690003873",
+    "creditor": {
+      "address_type": "S",
+      "name": "Aziende Industriali di Lugano (AIL) SA",
+      "address_line_1": "Casella postale",
+      "address_line_2": "",
+      "postal_code": "6901",
+      "city": "Lugano",
+      "country": "CH"
+    },
+    "ultimate_creditor": null,
+    "amount": "2492.70",
+    "currency": "CHF",
+    "ultimate_debtor": {
+      "address_type": "S",
+      "name": "Primeo Energie AG",
+      "address_line_1": "Überlandstrasse",
+      "address_line_2": "2",
+      "postal_code": "8953",
+      "city": "Dietikon",
+      "country": "CH"
+    },
+    "reference_type": "QRR",
+    "reference": "000002090739000008000568027",
+    "unstructured_message": "",
+    "trailer": "EPD",
+    "alternative_scheme_1": "",
+    "alternative_scheme_2": ""
+  }
+}

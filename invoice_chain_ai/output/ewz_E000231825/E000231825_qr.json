@@ -1,0 +1,36 @@
+{
+  "raw_qr_text": "SPC\r\n0200\r\n1\r\nCH9730000001156819940\r\nS\r\nStadt Zürich Elektrizitätswerk\r\n\r\n\r\n8050\r\nZürich\r\nCH\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n1637.15\r\nCHF\r\nS\r\nmobilezone ag\r\nSuurstoffi\r\n22\r\n6343\r\nRotkreuz\r\nCH\r\nQRR\r\n000000011554420700003684513\r\n\r\nEPD\r\n//S1/10/10000053808/11/240605/20/1155442/30//31/240729/32/8.1:4796.25/40/0:36",
+  "parsed_invoice": {
+    "qr_type": "SPC",
+    "version": "0200",
+    "coding_type": "1",
+    "iban": "CH9730000001156819940",
+    "creditor": {
+      "address_type": "S",
+      "name": "Stadt Zürich Elektrizitätswerk",
+      "address_line_1": "",
+      "address_line_2": "",
+      "postal_code": "8050",
+      "city": "Zürich",
+      "country": "CH"
+    },
+    "ultimate_creditor": null,
+    "amount": "1637.15",
+    "currency": "CHF",
+    "ultimate_debtor": {
+      "address_type": "S",
+      "name": "mobilezone ag",
+      "address_line_1": "Suurstoffi",
+      "address_line_2": "22",
+      "postal_code": "6343",
+      "city": "Rotkreuz",
+      "country": "CH"
+    },
+    "reference_type": "QRR",
+    "reference": "000000011554420700003684513",
+    "unstructured_message": "",
+    "trailer": "EPD",
+    "alternative_scheme_1": "//S1/10/10000053808/11/240605/20/1155442/30//31/240729/32/8.1:4796.25/40/0:36",
+    "alternative_scheme_2": ""
+  }
+}

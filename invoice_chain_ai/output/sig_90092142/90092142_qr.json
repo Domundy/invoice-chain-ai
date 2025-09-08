@@ -1,0 +1,36 @@
+{
+  "raw_qr_text": "SPC\r\n0200\r\n1\r\nCH9630000001120002250\r\nS\r\nSERVICES INDUSTRIELS DE GENEVE\r\nChemin du Chateau Bloch\r\n2\r\n1211\r\nGENEVE 2\r\nCH\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n2826.15\r\nCHF\r\nS\r\nPRIMEO ENERGIE AG\r\nReferenz MGB_DENNER\r\n8953 DIETIKON\r\n8953\r\nDIETIKON\r\nCH\r\nQRR\r\n000201133802002400001552099\r\n\r\nEPD",
+  "parsed_invoice": {
+    "qr_type": "SPC",
+    "version": "0200",
+    "coding_type": "1",
+    "iban": "CH9630000001120002250",
+    "creditor": {
+      "address_type": "S",
+      "name": "SERVICES INDUSTRIELS DE GENEVE",
+      "address_line_1": "Chemin du Chateau Bloch",
+      "address_line_2": "2",
+      "postal_code": "1211",
+      "city": "GENEVE 2",
+      "country": "CH"
+    },
+    "ultimate_creditor": null,
+    "amount": "2826.15",
+    "currency": "CHF",
+    "ultimate_debtor": {
+      "address_type": "S",
+      "name": "PRIMEO ENERGIE AG",
+      "address_line_1": "Referenz MGB_DENNER",
+      "address_line_2": "8953 DIETIKON",
+      "postal_code": "8953",
+      "city": "DIETIKON",
+      "country": "CH"
+    },
+    "reference_type": "QRR",
+    "reference": "000201133802002400001552099",
+    "unstructured_message": "",
+    "trailer": "EPD",
+    "alternative_scheme_1": "",
+    "alternative_scheme_2": ""
+  }
+}

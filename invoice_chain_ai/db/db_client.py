@@ -116,18 +116,6 @@ def get_customer_by_iban(iban: str) -> Optional[Dict[str, Any]]:
         conn.close()
 
 
-@traceable(name="Get Customer by Invoice (IBAN)")
-def get_customer_by_invoice(parsed_invoice: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-    """
-    Try to find a customer for the parsed_invoice based on the iban.
-    Returns None if no match.
-    """
-    iban = parsed_invoice.get("iban")
-    if not iban:
-        return None
-    return get_customer_by_iban(iban)
-
-
 def seed_customers_from_json(json_path: str) -> Dict[str, Any]:
     """
     Load customers from a JSON file and insert into DB.

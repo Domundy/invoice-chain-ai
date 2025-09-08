@@ -1,0 +1,36 @@
+{
+  "raw_qr_text": "SPC\r\n0200\r\n1\r\nCH5030000001400000659\r\nS\r\nIWB Industrielle Werke Basel\r\nMargarethenstrasse\r\n40\r\n4002\r\nBasel\r\nCH\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n5784.55\r\nCHF\r\nS\r\nPrimeo Energie AG\r\nUeberlandstrasse\r\n2.1\r\n8953\r\nDietikon\r\nCH\r\nQRR\r\n000020615534050000064915006\r\n\r\nEPD",
+  "parsed_invoice": {
+    "qr_type": "SPC",
+    "version": "0200",
+    "coding_type": "1",
+    "iban": "CH5030000001400000659",
+    "creditor": {
+      "address_type": "S",
+      "name": "IWB Industrielle Werke Basel",
+      "address_line_1": "Margarethenstrasse",
+      "address_line_2": "40",
+      "postal_code": "4002",
+      "city": "Basel",
+      "country": "CH"
+    },
+    "ultimate_creditor": null,
+    "amount": "5784.55",
+    "currency": "CHF",
+    "ultimate_debtor": {
+      "address_type": "S",
+      "name": "Primeo Energie AG",
+      "address_line_1": "Ueberlandstrasse",
+      "address_line_2": "2.1",
+      "postal_code": "8953",
+      "city": "Dietikon",
+      "country": "CH"
+    },
+    "reference_type": "QRR",
+    "reference": "000020615534050000064915006",
+    "unstructured_message": "",
+    "trailer": "EPD",
+    "alternative_scheme_1": "",
+    "alternative_scheme_2": ""
+  }
+}

@@ -1,0 +1,10 @@
+{
+    "customer": {
+        "id": 5,
+        "name": "SERVICES INDUSTRIELS DE GENEVE",
+        "customer_prompt": "## SIG-Specific Instructions  \n\n- The invoices are in French\n- Line item addresses come from \"Lieu de consommation\"\n\nWhen extracting data from a table like the one below, the top row must be ignored because it represents a summary, and the values in the child rows sum up to it. Only the child rows contain the detailed data that should be extracted.\n\nExample table:\n\n| Summary Row Example         |                 |           |           534.04 |            |\n| Child Row 1                 | kWh 2'667.8     | 0.1395    |           372.16 | 8.1        |\n| Child Row 2                 | kWh 1'704.0     | 0.0950    |           161.88 | 8.1        |\n\nExpected behavior: Extract only the child rows, ignoring the summary row. But you must consider the description of the main row for the description of the child rows.\n\n- Some line items only have a description and price - still include them. As long as it is not a summary of the following rows.\n\nSomething like this:\n\n| Energie réactive                                                                                 |                 |           |            85.16 |            |\n| Consommation - franchise                                                                         | kvarh 2'433.0   | 0.0350    |            85.16 | 8.1        |\n\nExpected description: Energie réactive Consommation - franchise",
+        "ibans": [
+            "CH9630000001120002250"
+        ]
+    }
+}

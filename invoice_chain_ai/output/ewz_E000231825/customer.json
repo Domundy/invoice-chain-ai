@@ -1,0 +1,10 @@
+{
+    "customer": {
+        "id": 3,
+        "name": "Stadt Zürich Elektrizitätswerk",
+        "customer_prompt": "## EWZ-Specific Instructions\n\n- The invoices are in German\n\n### Line Items\n- Show line items seperate for each meter point. If a meter point has multiple line items, they should be listed separately.\n\nsample table Meter Point 1:\n| Netznutzung                         | Menge    | Preis in CHF   | MWST in %   | Betrag in CHF   |\n|-------------------------------------|----------|----------------|-------------|-----------------|\n| 01.02.2024 bis 29.02.2024 (29 Tage) |          |                |             |                 |\n| Wirkenergie HT                      | 295 kWh  | 0.084500       | 8,1         | 24.93           |\n| Wirkenergie NT                      | 46 kWh   | 0.052000       | 8,1         | 2.39            |\n| Leistung HT                         | 4 kW     | 13.000000      | 8,1         | 52.00           |\n\nsample table Meter Point 2:\n| Netznutzung                         | Menge    | Preis in CHF   | MWST in %   | Betrag in CHF   |\n|-------------------------------------|----------|----------------|-------------|-----------------|\n| 01.02.2024 bis 29.02.2024 (29 Tage) |          |                |             |                 |\n| Wirkenergie HT                      | 234 kWh  | 0.084500       | 8,1         | 19.77           |\n| Wirkenergie NT                      | 23 kWh   | 0.052000       | 8,1         | 1.20            |\n| Leistung HT                         | 1 kW     | 13.000000      | 8,1         | 13.00           |\n\nGOOD:\n- Line item 1 Meterpoint 1: Wirkenergie HT\n- Line item 2 Meterpoint 1: Wirkenergie NT\n- Line item 3 Meterpoint 1: Leistung HT\n- Line item 1 Meterpoint 2: Wirkenergie HT\n- Line item 2 Meterpoint 2: Wirkenergie NT\n- Line item 3 Meterpoint 2: Leistung HT",
+        "ibans": [
+            "CH9730000001156819940"
+        ]
+    }
+}

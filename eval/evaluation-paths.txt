@@ -1,0 +1,10 @@
+./training_data/ail-sa/10287649.pdf
+./training_data/ail-sa/90107100.pdf
+./training_data/bkw/90092765.pdf
+./training_data/bkw/10300359.pdf
+./training_data/ewz/E000226069.pdf
+./training_data/ewz/E000231825.pdf
+./training_data/iwb/10304193.pdf
+./training_data/iwb/E000237695.pdf
+./training_data/sig/10300992.pdf
+./training_data/sig/90092142.pdf

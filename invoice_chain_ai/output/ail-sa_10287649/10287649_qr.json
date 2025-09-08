@@ -1,0 +1,36 @@
+{
+  "raw_qr_text": "SPC\n0200\n1\nCH0230000004690003873\nS\nAziende Industriali di Lugano (AIL) SA\nCasella postale\n\n6901\nLugano\nCH\n\n\n\n\n\n\n\n4410.25\nCHF\nS\nMEDISYN AG\nUeberlandstrasse\n2\n8953\nDietikon\nCH\nQRR\n000002028858000001017213995\n\nEPD",
+  "parsed_invoice": {
+    "qr_type": "SPC",
+    "version": "0200",
+    "coding_type": "1",
+    "iban": "CH0230000004690003873",
+    "creditor": {
+      "address_type": "S",
+      "name": "Aziende Industriali di Lugano (AIL) SA",
+      "address_line_1": "Casella postale",
+      "address_line_2": "",
+      "postal_code": "6901",
+      "city": "Lugano",
+      "country": "CH"
+    },
+    "ultimate_creditor": null,
+    "amount": "4410.25",
+    "currency": "CHF",
+    "ultimate_debtor": {
+      "address_type": "S",
+      "name": "MEDISYN AG",
+      "address_line_1": "Ueberlandstrasse",
+      "address_line_2": "2",
+      "postal_code": "8953",
+      "city": "Dietikon",
+      "country": "CH"
+    },
+    "reference_type": "QRR",
+    "reference": "000002028858000001017213995",
+    "unstructured_message": "",
+    "trailer": "EPD",
+    "alternative_scheme_1": "",
+    "alternative_scheme_2": ""
+  }
+}

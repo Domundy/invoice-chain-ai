@@ -1,0 +1,10 @@
+{
+    "customer": {
+        "id": 4,
+        "name": "IWB Industrielle Werke Basel",
+        "customer_prompt": "## IWB-Specific Instructions\n\n- The invoices are in German\n- city_zip and provider city_zip are in the format \"City ZIP\" (e.g., 4002, or 4002 Basel)\n- Show the line items separately.\n\nSample table:\n| Bezeichnung                | Dauer               | Faktor   | Preis pro Einheit   | Preis pro Einheit   | Menge     | Menge   | Betrag   |\n|----------------------------|---------------------|----------|---------------------|---------------------|-----------|---------|----------|\n| NNE Normaltarif Zone 1     | 01.05.23 - 31.05.23 |          | 8.40                | Rp                  | 4 167.00  | kWh     | 350.03   |\n| NNE Normaltarif Zone 2     | 01.05.23 - 31.05.23 |          | 5.30                | Rp                  | 13 504.13 | kWh     | 715.72   |\n| NNE Spartarif Zone 1       | 01.05.23 - 31.05.23 |          | 5.60                | Rp                  | 4 167.00  | kWh     | 233.35   |\n\nGOOD:\n- NNE Normaltarif Zone 1\n- NNE Normaltarif Zone 2\n- NNE Spartarif Zone 1",
+        "ibans": [
+            "CH5030000001400000659"
+        ]
+    }
+}

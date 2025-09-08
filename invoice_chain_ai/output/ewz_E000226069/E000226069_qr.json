@@ -1,0 +1,36 @@
+{
+  "raw_qr_text": "SPC\r\n0200\r\n1\r\nCH9730000001156819940\r\nS\r\nStadt Zürich Elektrizitätswerk\r\n\r\n\r\n8050\r\nZürich\r\nCH\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n4640.10\r\nCHF\r\nS\r\nCredit Suisse AG\r\nParadeplatz\r\n8\r\n8001\r\nZürich\r\nCH\r\nQRR\r\n000000010641000200021322326\r\n\r\nEPD\r\n//S1/10/34400027041/11/240331/20/1064100/30//31/240521/32/8.1:4292.41/40/0:36",
+  "parsed_invoice": {
+    "qr_type": "SPC",
+    "version": "0200",
+    "coding_type": "1",
+    "iban": "CH9730000001156819940",
+    "creditor": {
+      "address_type": "S",
+      "name": "Stadt Zürich Elektrizitätswerk",
+      "address_line_1": "",
+      "address_line_2": "",
+      "postal_code": "8050",
+      "city": "Zürich",
+      "country": "CH"
+    },
+    "ultimate_creditor": null,
+    "amount": "4640.10",
+    "currency": "CHF",
+    "ultimate_debtor": {
+      "address_type": "S",
+      "name": "Credit Suisse AG",
+      "address_line_1": "Paradeplatz",
+      "address_line_2": "8",
+      "postal_code": "8001",
+      "city": "Zürich",
+      "country": "CH"
+    },
+    "reference_type": "QRR",
+    "reference": "000000010641000200021322326",
+    "unstructured_message": "",
+    "trailer": "EPD",
+    "alternative_scheme_1": "//S1/10/34400027041/11/240331/20/1064100/30//31/240521/32/8.1:4292.41/40/0:36",
+    "alternative_scheme_2": ""
+  }
+}

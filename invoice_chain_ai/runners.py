@@ -68,7 +68,55 @@ def run_processing(copied_pdf: Optional[Path], parser_name: str | None, use_llm:
 
         # Structured-output-only mode (no parser requested)
         if structured_output_flag and parser_name is None:
-            # ...existing code...
+            md_candidates = list(run_dir.glob("*.marker.md")) + list(run_dir.glob("*.docling.md")) + list(run_dir.glob("*.md"))
+            if not md_candidates:
+                print("Error: no markdown file found in run-dir for structured output.", file=sys.stderr)
+                return 2
+
+            md_path = md_candidates[0]
+            print(f"Using markdown for structured output: {md_path}")
+
+            # Try to read customer.json and derive a prompt key/text
+            customer_prompt = None
+            customer_json_path = run_dir / "customer.json"
+            if customer_json_path.exists():
+                try:
+                    cust = json.loads(customer_json_path.read_text(encoding="utf-8"))
+                    customer_prompt = choose_prompt(cust)
+                except Exception as e:
+                    print(f"Warning: could not read customer.json for structured output: {e}", file=sys.stderr)
+            else:
+                print("No customer.json found; structured output will use default/empty customer prompt.")
+
+            # Invoke structured output
+            try:
+                # Wrap in a Runnable to give LangSmith a clear run name
+                so_runnable = RunnableLambda(
+                    lambda _: run_structured_output_modern(md_path, customer_prompt, run_dir),
+                    name="Structured Output"
+                )
+                structured_result = so_runnable.invoke(
+                    None,
+                    config={
+                        "callbacks": [handler],
+                        # filename::structured-output
+                        "run_name": f"{md_path.name}::structured-output"
+                    },
+                )
+                so_out = run_dir / "structured_output.json"
+                so_out.write_text(json.dumps(structured_result, ensure_ascii=False, indent=4), encoding="utf-8")
+                print(f"Wrote structured output: {so_out}")
+            except Exception as e:
+                print(f"❌ Structured output step failed: {e}", file=sys.stderr)
+                return 4
+
+            # Attempt BZArt enrichment (best-effort)
+            try:
+                enriched = enrich_bz_art(so_out, run_dir)
+                print(f"Wrote BZ-enriched structured output: {run_dir / 'enriched_structured_output.json'}")
+            except Exception as e:
+                print(f"Warning: BZArt enrichment failed: {e}", file=sys.stderr)
+
             return 0
 
         # From here, require a copied_pdf for the usual flows
@@ -80,13 +128,19 @@ def run_processing(copied_pdf: Optional[Path], parser_name: str | None, use_llm:
         if qr_only:
             # run QR scanner (no heuristic first)
             qr_runnable = RunnableLambda(lambda _: scan_qr_trace(copied_pdf, run_dir, use_heuristic=False), name="QR Scanner")
-            qr_result = qr_runnable.invoke(None, config={"callbacks": [handler]})
+            qr_result = qr_runnable.invoke(
+                None,
+                config={"callbacks": [handler], "run_name": f"{copied_pdf.name}::qr"}
+            )
 
             # If no QR found, retry with heuristic (uses written markdown if available)
             if qr_result.get("qr_result") is None:
                 print("No Swiss QR code found. Retrying with heuristic...")
                 qr_runnable_h = RunnableLambda(lambda _: scan_qr_trace(copied_pdf, run_dir, use_heuristic=True), name="QR Scanner (heuristic)")
-                qr_result = qr_runnable_h.invoke(None, config={"callbacks": [handler]})
+                qr_result = qr_runnable_h.invoke(
+                    None,
+                    config={"callbacks": [handler], "run_name": f"{copied_pdf.name}::qr::heuristic"}
+                )
 
             if qr_result.get("qr_result") is None:
                 print("No Swiss QR code found.")
@@ -115,7 +169,10 @@ def run_processing(copied_pdf: Optional[Path], parser_name: str | None, use_llm:
         if parser_name in ["docling", "marker"]:
             parser_runnable = RunnableLambda(lambda _: convert_pdf_trace(copied_pdf, parser_name, use_llm, run_dir), name=f"{parser_name.capitalize()} Parser")
             # run parser synchronously
-            parser_result = parser_runnable.invoke(None, config={"callbacks": [handler]})
+            parser_result = parser_runnable.invoke(
+                None,
+                config={"callbacks": [handler], "run_name": f"{copied_pdf.name}::{parser_name}"}
+            )
 
             # Write markdown output (required for heuristic fallback)
             try:
@@ -129,13 +186,19 @@ def run_processing(copied_pdf: Optional[Path], parser_name: str | None, use_llm:
 
             # Now run QR scan (no heuristic first)
             qr_runnable = RunnableLambda(lambda _: scan_qr_trace(copied_pdf, run_dir, use_heuristic=False), name="QR Scanner")
-            qr_result = qr_runnable.invoke(None, config={"callbacks": [handler]})
+            qr_result = qr_runnable.invoke(
+                None,
+                config={"callbacks": [handler], "run_name": f"{copied_pdf.name}::qr"}
+            )
 
             # If no QR found, retry with heuristic (uses written markdown)
             if qr_result.get("qr_result") is None:
                 print("No Swiss QR code found. Retrying with heuristic from markdown...")
                 qr_runnable_h = RunnableLambda(lambda _: scan_qr_trace(copied_pdf, run_dir, use_heuristic=True), name="QR Scanner (heuristic)")
-                qr_result = qr_runnable_h.invoke(None, config={"callbacks": [handler]})
+                qr_result = qr_runnable_h.invoke(
+                    None,
+                    config={"callbacks": [handler], "run_name": f"{copied_pdf.name}::qr::heuristic"}
+                )
 
             # Handle QR result
             if qr_result.get("qr_result") is None:
@@ -174,8 +237,19 @@ def run_processing(copied_pdf: Optional[Path], parser_name: str | None, use_llm:
                 try:
                     # written is the path returned from write_markdown (string or Path)
                     md_path = Path(written)
-                    structured_result = run_structured_output_modern(md_path, customer_prompt, run_dir)
-                    so_out = run_dir / "raw_structured_output.json"
+                    so_runnable = RunnableLambda(
+                        lambda _: run_structured_output_modern(md_path, customer_prompt, run_dir),
+                        name="Structured Output"
+                    )
+                    structured_result = so_runnable.invoke(
+                        None,
+                        config={
+                            "callbacks": [handler],
+                            # filename::<parser>::structured-output
+                            "run_name": f"{md_path.name}::{parser_name}::structured-output"
+                        },
+                    )
+                    so_out = run_dir / "structured_output.json"
                     so_out.write_text(json.dumps(structured_result, ensure_ascii=False, indent=4), encoding="utf-8")
                     print(f"Wrote structured output: {so_out}")
                 except Exception as e:
@@ -202,7 +276,10 @@ def run_processing(copied_pdf: Optional[Path], parser_name: str | None, use_llm:
             # 1. Docling
             print("1/3: Running Docling conversion...")
             try:
-                docling_result = docling_runnable.invoke(None, config={"callbacks": [handler]})
+                docling_result = docling_runnable.invoke(
+                    None,
+                    config={"callbacks": [handler], "run_name": f"{copied_pdf.name}::docling"}
+                )
                 results["docling"] = docling_result
                 print("✅ Docling conversion completed")
             except Exception as e:
@@ -212,7 +289,10 @@ def run_processing(copied_pdf: Optional[Path], parser_name: str | None, use_llm:
             # 2. Marker
             print("2/3: Running Marker conversion...")
             try:
-                marker_result = marker_runnable.invoke(None, config={"callbacks": [handler]})
+                marker_result = marker_runnable.invoke(
+                    None,
+                    config={"callbacks": [handler], "run_name": f"{copied_pdf.name}::marker"}
+                )
                 results["marker"] = marker_result
                 print("✅ Marker conversion completed")
             except Exception as e:
@@ -243,7 +323,10 @@ def run_processing(copied_pdf: Optional[Path], parser_name: str | None, use_llm:
             print("3/3: Scanning QR code...")
             qr_runnable = RunnableLambda(lambda _: scan_qr_trace(copied_pdf, run_dir, use_heuristic=False), name="QR Scanner")
             try:
-                qr_result = qr_runnable.invoke(None, config={"callbacks": [handler]})
+                qr_result = qr_runnable.invoke(
+                    None,
+                    config={"callbacks": [handler], "run_name": f"{copied_pdf.name}::qr"}
+                )
             except Exception as e:
                 print(f"❌ QR scanning failed: {e}")
                 errors.append(("qr", e))
@@ -254,7 +337,10 @@ def run_processing(copied_pdf: Optional[Path], parser_name: str | None, use_llm:
                 print("No QR found; retrying with heuristic based on generated markdown...")
                 qr_runnable_h = RunnableLambda(lambda _: scan_qr_trace(copied_pdf, run_dir, use_heuristic=True), name="QR Scanner (heuristic)")
                 try:
-                    qr_result = qr_runnable_h.invoke(None, config={"callbacks": [handler]})
+                    qr_result = qr_runnable_h.invoke(
+                        None,
+                        config={"callbacks": [handler], "run_name": f"{copied_pdf.name}::qr::heuristic"}
+                    )
                 except Exception as e:
                     print(f"❌ QR heuristic scan failed: {e}")
                     errors.append(("qr_heuristic", e))

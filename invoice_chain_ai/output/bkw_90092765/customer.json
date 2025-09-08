@@ -1,0 +1,10 @@
+{
+    "customer": {
+        "id": 2,
+        "name": "BKW Energie AG",
+        "customer_prompt": "## BKW-Specific Instructions\n\n- The invoices are in German\n### Exclusions\n- Skip all lines marked as \"verrechnungsfrei\"\n- Abgaben are NOT part of the \"Rest\" category. They are part of Netznutzung\n\n### Energy Tariffs\n- High tariff (HT) and low tariff (NT): Separate line items\n- Network usage: Split into DL_HT and DL_NT\n\n### Fee Categorization\n- Energy basic fee -> Geb_G\n- Network basic fee -> DL_Geb",
+        "ibans": [
+            "CH4030000008300003107"
+        ]
+    }
+}

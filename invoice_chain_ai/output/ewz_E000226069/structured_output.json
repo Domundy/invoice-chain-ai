@@ -1,0 +1,60 @@
+{
+  "header": {
+    "invoice_number": null,
+    "invoice_date": "12.04.2024",
+    "due_date": "21.05.2024",
+    "invoice_type": null,
+    "invoice_language": "de",
+    "customer_number": "1 064 100",
+    "contract_number": null,
+    "address_reference_line": "Primeo Energie AG Referenz Credit Suisse Ueberlandstrasse 2 8953 Dietikon",
+    "vat_number": "CHE-116.303.292 MWST 34 400 027 041",
+    "billing_period": "01.03.2024-31.03.2024",
+    "total_amount_excl_vat": 4292.41,
+    "total_amount_excl_vat_unit": "CHF",
+    "vat_amount": 347.69,
+    "vat_amount_unit": "CHF",
+    "total_amount_incl_vat": 4640.1,
+    "total_amount_incl_vat_unit": "CHF",
+    "rounding_difference": null,
+    "rounding_difference_unit": null,
+    "payable_amount": 4640.1,
+    "payable_amount_unit": "CHF",
+    "provider": {
+      "name": "Stadt Zürich Elektrizitätswerk",
+      "address_line1": null,
+      "city_zip": "8050 Zürich"
+    },
+    "payment_information": {
+      "creditor_name": "Stadt Zürich Elektrizitätswerk",
+      "street": null,
+      "city_zip": "8050 Zürich",
+      "iban": "CH9730000001156819940",
+      "reference": "000000010641000200021322326",
+      "amount": "4640.10",
+      "currency": "CHF"
+    },
+    "filename": "E000226069"
+  },
+  "line_items": [
+    {
+      "line_items_description": "01.03.2024 bis 31.03.2024 (31 Tage) ewz.tranche ET",
+      "delivery_period": "01.03.2024-31.03.2024",
+      "quantity": 27797.0,
+      "quantity_unit": "kWh",
+      "unit_price": 0.15442,
+      "total_price": 4292.41,
+      "vat_amount": null,
+      "vat_rate": 0.081,
+      "total_price_incl_vat": null,
+      "meter_point": "CH1019901234500000000000000041085",
+      "meter_number": null,
+      "utility": "E",
+      "category": "Energie",
+      "tarif_product": "ewz.tranche ET",
+      "VS_Adr": "St. Leonhard-Strasse 3",
+      "VS_Ort": "9000 St. Gallen",
+      "BZArt": "UNKNOWN"
+    }
+  ]
+}

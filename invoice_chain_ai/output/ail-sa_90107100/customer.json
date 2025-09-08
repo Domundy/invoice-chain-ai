@@ -1,0 +1,10 @@
+{
+    "customer": {
+        "id": 1,
+        "name": "Aziende Industriali di Lugano (AIL) SA",
+        "customer_prompt": "## AIL-Specific Instructions\n\n- The invoices are in Italian\n- Store the Invoice Number WITHOUT dots. GOOD: 10267775 BAD: 10.267.7775",
+        "ibans": [
+            "CH0230000004690003873"
+        ]
+    }
+}

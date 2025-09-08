@@ -17,9 +17,7 @@ load_dotenv()
 try:
     from .db.db_client import (
         init_db,
-        get_customer_by_invoice,
         get_customer_by_iban,
-        get_customer_by_name_city,
         seed_customers_from_json,
         choose_prompt,
     )
@@ -28,13 +26,7 @@ except Exception:
     def init_db():
         return {"status": "noop", "reason": "db package not available"}
 
-    def get_customer_by_invoice(_):
-        return None
-
     def get_customer_by_iban(_):
-        return None
-
-    def get_customer_by_name_city(_, __=None):
         return None
 
     def seed_customers_from_json(_):
